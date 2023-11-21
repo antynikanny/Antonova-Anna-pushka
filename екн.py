@@ -121,7 +121,13 @@ class Gun:
             self.color = GREY
 
     def draw(self):
-        # FIXIT don't know how to do it
+            pygame.draw.circle(
+                self.screen,
+                self.color,
+                (self.x, self.y),
+                self.r
+            )
+
 
     def power_up(self):
         if self.f2_on:
@@ -133,8 +139,16 @@ class Gun:
 
 
 class Target:
-    # self.points = 0
-    # self.live = 1
+    def __init__(self, screen):
+     self.points = 0
+     self.live = 1
+     self.screen = screen
+     self.x = rnd(600, 780)
+     self.y = rnd(300, 550)
+     self.r = rnd(2, 50)
+     self.vx = rnd(-10, 10)
+     self.vy = rnd(-10, 10)
+     self.color = RED
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
 
@@ -143,14 +157,20 @@ class Target:
         x = self.x = rnd(600, 780)
         y = self.y = rnd(300, 550)
         r = self.r = rnd(2, 50)
-        color = self.color = RED
+
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
 
     def draw(self):
-        ...
+        pygame.draw.circle(
+            self.screen,
+            self.color,
+            (self.x, self.y),
+            self.r
+        )
+
 
 
 pygame.init()
