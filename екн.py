@@ -5,8 +5,6 @@ import pygame
 
 
 FPS = 30
-g = 9.8
-
 RED = 0xFF0000
 BLUE = 0x0000FF
 YELLOW = 0xFFC91F
@@ -20,6 +18,7 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 WIDTH = 800
 HEIGHT = 600
+g=-1
 
 
 class Ball:
@@ -47,9 +46,19 @@ class Ball:
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
         и стен по краям окна (размер окна 800х600).
         """
-        # FIXME
         self.x += self.vx
-        self.y -= self.vy
+        self.y += self.vy
+        self.vy += g
+        if self.x >= WIDTH - self.r or self.x <= self.r:
+            if self.x > WIDTH - self.r:
+                self.x = WIDTH - self.r
+            if self.x < self.r:
+                self.x = self.r
+            self.vx *= -1
+        if self.y >= HEIGHT - self.r:
+            if self.y > HEIGHT - self.r:
+                self.y = HEIGHT - self.r
+            self.vy *= -1
 
     def draw(self):
         pygame.draw.circle(
@@ -68,6 +77,9 @@ class Ball:
             Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
         """
         # FIXME
+        if (self.x - obj.x)**2+(self.y - obj.y)**2 <= (self.r + obj.r)**2:
+            return True
+        else:
             return False
 
 
