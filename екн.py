@@ -143,7 +143,7 @@ class Ball3:
             self.vy *= -1
             self.vx *= 1
 
-        if pygame.time.get_ticks() - self.birth >= 1300:
+        if pygame.time.get_ticks() - self.birth >= 10:
             balls.remove(self)
             del self
         else:
@@ -249,6 +249,82 @@ class Gun:
         else:
             self.color = GREY
 
+class Gun2:
+    def __init__(self, screen, balls_type):
+        self.screen = screen
+        self.f2_power = 10
+        self.f2_on = 0
+        self.an = 1
+        self.x = 700
+        self.color = GREY
+        self.balls_type = "bal1"
+
+    def switch_balls(self):
+        self.balls_type = "bal1"
+
+    def switch_balls3(self):
+        self.balls_type = "bal3"
+
+    def fire_start(self, event):
+        self.f2_on = 1
+
+    def fire_end(self, event):
+        if self.balls_type == "bal1":
+            self.fire1(event)
+        elif self.balls_type == "bal3":
+            self.fire3(event)
+
+    def fire1(self, event):
+        global balls, bullet
+        bullet += 1
+        new_ball = Ball(self.screen, gun)
+        new_ball.r += 5
+        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
+        new_ball.vx =  self.f2_power * math.cos(self.an)
+        new_ball.vy = self.f2_power * math.sin(self.an)
+        balls.append(new_ball)
+        self.f2_on = 0
+        self.f2_power = 10
+    def fire3(self, event):
+        global balls, bullet
+        bullet += 1
+        new_ball3 = Ball3(self.screen, gun)
+        new_ball3.r += 5
+        self.an = math.atan2((event.pos[1]-new_ball3.y), (event.pos[0]-new_ball3.x))
+        new_ball3.vx = self.f2_power * math.cos(self.an)
+        new_ball3.vy = self.f2_power * math.sin(self.an)
+        balls.append(new_ball3)
+        self.f2_on = 0
+        self.f2_power = 10
+
+    def targetting(self, event):
+        """Прицеливание. Зависит от положения мыши."""
+        if event:
+            d = event.pos[0]-20
+            self.an = math.atan((event.pos[1]-450) / d if d != 0 else 1)
+        if self.f2_on:
+            self.color = RED
+        else:
+            self.color = GREY
+    def moveleft(self):
+            self.x = 10
+    def moveright(self):
+            self.x += 10
+
+
+
+    def draw(self):
+        pygame.draw.line(screen, self.color, [self.x, 450],
+                         [self.x - self.f2_power * math.cos(self.an),
+                          450 + self.f2_power * math.sin(self.an)], 10)
+
+    def power_up(self):
+        if self.f2_on:
+            if self.f2_power < 100:
+                self.f2_power += 1
+            self.color = RED
+        else:
+            self.color = GREY
 
 
 
@@ -376,17 +452,15 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
 balls = []
 balls_type = "bal1"
-
-clock = pygame.time.Clock()
 gun = Gun(screen, balls_type)
-types =[Target_gor, Target,Target_vert]
+clock = pygame.time.Clock()
+types = [Target_gor, Target, Target_vert]
 target1 = choice(types)((screen))
 target2 = choice(types)((screen))
 finished = False
 
 while not finished:
     screen.fill(WHITE)
-    gun.draw()
     if target1.live:
         target1.draw()
         target1.move()
@@ -401,6 +475,13 @@ while not finished:
         gun.switch_balls()
     if pygame.key.get_pressed()[pygame.K_2]:
         gun.switch_balls3()
+    if pygame.key.get_pressed()[pygame.K_3]:
+        gun = Gun(screen, balls_type)
+        gun.draw()
+    if pygame.key.get_pressed()[pygame.K_4]:
+        gun = Gun2(screen, balls_type)
+        gun.draw()
+    gun.draw()
 
     for b in balls:
         b.draw()
@@ -416,9 +497,6 @@ while not finished:
             gun.fire_end(event)
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
-
-
-
 
     for b in balls:
         b.move()
