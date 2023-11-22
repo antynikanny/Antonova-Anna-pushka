@@ -64,6 +64,7 @@ class Ball:
             if self.y > HEIGHT - self.r:
                 self.y = HEIGHT - self.r
             self.vy *= -1
+
         if pygame.time.get_ticks() - self.birth >= 1300:
             balls.remove(self) 
             del self
