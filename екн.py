@@ -154,6 +154,8 @@ class Target:
      self.x = rnd(600, 780)
      self.y = rnd(300, 550)
      self.r = rnd(30, 50)
+     self.vx = rnd(10,10)
+     self.vy = rnd(10,10)
      self.color = RED
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
@@ -164,6 +166,19 @@ class Target:
         self.y = rnd(300, 550)
         self.r = rnd(30, 50)
         self.live = 1
+    def move(self):
+        self.x += self.vx
+        self.y += self.vy
+        if self.x >= WIDTH - self.r or self.x <= self.r:
+            if self.x > WIDTH - self.r:
+                self.x = WIDTH - self.r
+            if self.x < self.r:
+                self.x = self.r
+            self.vx *= -1
+        if self.y >= HEIGHT - self.r:
+            if self.y > HEIGHT - self.r:
+                self.y = HEIGHT - self.r
+            self.vy *= -1
 
 
     def hit(self, points=1):
@@ -187,13 +202,19 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target = Target(screen)
+target1 = Target(screen)
+target2 = Target(screen)
 finished = False
 
 while not finished:
     screen.fill(WHITE)
     gun.draw()
-    target.draw()
+    if target1.live:
+        target1.draw()
+        target1.move()
+    if target2.live:
+        target2.draw()
+        target2.move()
 
     for b in balls:
         b.draw()
@@ -212,10 +233,14 @@ while not finished:
 
     for b in balls:
         b.move()
-        if b.hittest(target):
-            target.live = 0
-            target.hit()
-            target.new_target()
+        if b.hittest(target1):
+            target1.live = 0
+            target1.hit()
+            target1.new_target()
+        if b.hittest(target2):
+            target2.live = 0
+            target2.hit()
+            target2.new_target()
 
     gun.power_up()
 
