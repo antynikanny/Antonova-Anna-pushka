@@ -167,78 +167,6 @@ class Ball3:
         """
         return sqrt((obj.x - self.x)**2 + (obj.y - self.y)**2) <= obj.r + self.r
 
-
-class Gun:
-    def __init__(self, screen):
-        self.screen = screen
-        self.f2_power = 10
-        self.f2_on = 0
-        self.an = 1
-        self.x = 40
-        self.color = GREY
-
-
-    def fire2_start(self, event):
-        self.f2_on = 1
-
-    def fire2_end(self, event):
-        """Выстрел мячом.
-
-        Происходит при отпускании кнопки мыши.
-        Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
-        """
-        global balls, bullet
-        bullet += 1
-        new_ball = Ball(self.screen, gun)
-        new_ball.r += 5
-        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
-        new_ball.vx = self.f2_power * math.cos(self.an)
-        new_ball.vy = self.f2_power * math.sin(self.an)
-        balls.append(new_ball)
-        self.f2_on = 0
-        self.f2_power = 10
-
-    def fire3_end(self, event):
-        global ball3, bullet
-        bullet += 1
-        new_ball3 = Ball3(self.screen, gun)
-        new_ball3.r += 5
-        self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
-        new_ball3.vx = self.f2_power * math.cos(self.an)
-        new_ball3.vy = self.f2_power * math.sin(self.an)
-        balls3.append(new_ball3)
-        self.f2_on = 0
-        self.f2_power = 10
-
-    def targetting(self, event):
-        """Прицеливание. Зависит от положения мыши."""
-        if event:
-            d = event.pos[0]-20
-            self.an = math.atan((event.pos[1]-450) / d if d != 0 else 1)
-        if self.f2_on:
-            self.color = RED
-        else:
-            self.color = GREY
-    def moveleft(self):
-            self.x -= 10
-    def moveright(self):
-            self.x += 10
-
-
-
-    def draw(self):
-        pygame.draw.line(screen, self.color, [self.x, 450],
-                         [self.x + self.f2_power * math.cos(self.an),
-                          450 + self.f2_power * math.sin(self.an)], 10)
-
-    def power_up(self):
-        if self.f2_on:
-            if self.f2_power < 100:
-                self.f2_power += 1
-            self.color = RED
-        else:
-            self.color = GREY
-
 class Gun:
     def __init__(self, screen, balls_type):
         self.screen = screen
@@ -247,6 +175,7 @@ class Gun:
         self.an = 1
         self.x = 40
         self.color = GREY
+        self.balls_type = "bal1"
 
     def switch_balls(self):
         self.balls_type = "bal1"
