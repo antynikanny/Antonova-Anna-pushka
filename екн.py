@@ -37,7 +37,7 @@ waiting_for_sleep_to_over = False
 
 
 class Ball:
-    def __init__(self, screen: pygame.Surface, x=40, y=450):
+    def __init__(self, screen: pygame.Surface, gun):
         """ Конструктор класса ball
 
         Args:
@@ -45,8 +45,8 @@ class Ball:
         y - начальное положение мяча по вертикали
         """
         self.screen = screen
-        self.x = x
-        self.y = y
+        self.x = gun.x
+        self.y = 450
         self.r = 10
         self.vx = 0
         self.vy = 0
@@ -124,7 +124,7 @@ class Gun:
         """
         global balls, bullet
         bullet += 1
-        new_ball = Ball(self.screen)
+        new_ball = Ball(self.screen, gun)
         new_ball.r += 5
         self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
