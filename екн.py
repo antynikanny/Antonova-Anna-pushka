@@ -452,14 +452,19 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 bullet = 0
 balls = []
 balls_type = "bal1"
-gun = Gun(screen, balls_type)
+gun1 = Gun(screen, balls_type)
 clock = pygame.time.Clock()
 types = [Target_gor, Target, Target_vert]
 target1 = choice(types)((screen))
 target2 = choice(types)((screen))
 finished = False
+gun2 = Gun2(screen, balls_type)
+gun = gun1
+
 
 while not finished:
+    gun1.draw()
+    gun2.draw()
     screen.fill(WHITE)
     if target1.live:
         target1.draw()
@@ -468,19 +473,23 @@ while not finished:
         target2.draw()
         target2.move()
     if pygame.key.get_pressed()[pygame.K_LEFT]:
-        gun.moveleft()
+        if gun == gun1:
+         gun1.moveleft()
+        else:
+            gun2.moveleft()
     if pygame.key.get_pressed()[pygame.K_RIGHT]:
-        gun.moveright()
+        if gun == gun1:
+            gun1.moveright()
+        else:
+            gun2.moveright()
     if pygame.key.get_pressed()[pygame.K_1]:
         gun.switch_balls()
     if pygame.key.get_pressed()[pygame.K_2]:
         gun.switch_balls3()
     if pygame.key.get_pressed()[pygame.K_3]:
-        gun = Gun(screen, balls_type)
-        gun.draw()
-    if pygame.key.get_pressed()[pygame.K_4]:
-        gun = Gun2(screen, balls_type)
-        gun.draw()
+        gun = gun1
+    elif pygame.key.get_pressed()[pygame.K_4]:
+        gun = gun2
     gun.draw()
 
     for b in balls:
@@ -492,11 +501,20 @@ while not finished:
         if event.type == pygame.QUIT:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            gun.fire_start(event)
+            if gun == gun1:
+                gun1.fire_start(event)
+            else:
+                gun2.fire_start(event)
         elif event.type == pygame.MOUSEBUTTONUP:
-            gun.fire_end(event)
+            if gun == gun1:
+                gun1.fire_end(event)
+            else:
+                gun2.fire_end(event)
         elif event.type == pygame.MOUSEMOTION:
-            gun.targetting(event)
+            if gun == gun1:
+                gun1.targetting(event)
+            else:
+                gun2.targetting(event)
 
     for b in balls:
         b.move()
