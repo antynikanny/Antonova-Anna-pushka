@@ -127,8 +127,8 @@ class Ball3:
         и стен по краям окна (размер окна 800х600).
         """
         g = 1
-        self.x += self.vx
-        self.y += self.vy
+        self.x += self.vx*3
+        self.y += self.vy*3
         self.vy += g
         if self.x >= WIDTH - self.r or self.x <= self.r:
             if self.x > WIDTH - self.r:
@@ -259,7 +259,7 @@ class Target:
      self.screen = screen
      self.x = rnd(600, 780)
      self.y = rnd(300, 550)
-     self.r = rnd(30, 50)
+     self.r = rnd(20, 50)
      self.vx = rnd(4,4)
      self.vy = rnd(4,4)
      self.color = RED
@@ -307,7 +307,7 @@ class Target_gor:
      self.screen = screen
      self.x = rnd(600, 780)
      self.y = rnd(300, 550)
-     self.r = rnd(30, 50)
+     self.r = rnd(20, 50)
      self.vx = rnd(4,4)
      self.color = RED
     def new_target(self):
@@ -397,9 +397,9 @@ while not finished:
         gun.moveleft()
     if pygame.key.get_pressed()[pygame.K_RIGHT]:
         gun.moveright()
-    if pygame.key.get_pressed()[pygame.K_TAB]:
+    if pygame.key.get_pressed()[pygame.K_1]:
         gun.switch_balls()
-    if pygame.key.get_pressed()[pygame.K_0]:
+    if pygame.key.get_pressed()[pygame.K_2]:
         gun.switch_balls3()
 
     for b in balls:
