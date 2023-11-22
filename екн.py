@@ -154,8 +154,8 @@ class Target:
      self.x = rnd(600, 780)
      self.y = rnd(300, 550)
      self.r = rnd(30, 50)
-     self.vx = rnd(10,10)
-     self.vy = rnd(10,10)
+     self.vx = rnd(4,4)
+     self.vy = rnd(4,4)
      self.color = RED
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
@@ -167,18 +167,20 @@ class Target:
         self.r = rnd(30, 50)
         self.live = 1
     def move(self):
-        self.x += self.vx
-        self.y += self.vy
         if self.x >= WIDTH - self.r or self.x <= self.r:
             if self.x > WIDTH - self.r:
                 self.x = WIDTH - self.r
             if self.x < self.r:
                 self.x = self.r
             self.vx *= -1
+
         if self.y >= HEIGHT - self.r:
-            if self.y > HEIGHT - self.r:
-                self.y = HEIGHT - self.r
             self.vy *= -1
+
+        if self.y <= 0 + self.r:
+            self.vy *= -1
+        self.x += self.vx
+        self.y += self.vy
 
 
     def hit(self, points=1):
