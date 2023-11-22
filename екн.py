@@ -1,7 +1,7 @@
 import math
 from random import choice
-
 import pygame
+from random import choice, randint as rnd
 
 
 FPS = 30
@@ -18,7 +18,7 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 WIDTH = 800
 HEIGHT = 600
-g=-1
+g=0.7
 
 
 class Ball:
@@ -37,7 +37,10 @@ class Ball:
         self.vy = 0
         self.color = choice(GAME_COLORS)
         self.live = 30
+        self.birth = pygame.time.get_ticks()
         balls.append(self)
+
+
 
     def move(self):
         """Переместить мяч по прошествии единицы времени.
@@ -121,12 +124,9 @@ class Gun:
             self.color = GREY
 
     def draw(self):
-            pygame.draw.circle(
-                self.screen,
-                self.color,
-                (self.x, self.y),
-                self.r
-            )
+            pygame.draw.line(screen, self.color, [40, 450],
+                             [40 + self.f2_power * math.cos(self.an),
+                              450 + self.f2_power * math.sin(self.an)], 10)
 
 
     def power_up(self):
@@ -145,18 +145,17 @@ class Target:
      self.screen = screen
      self.x = rnd(600, 780)
      self.y = rnd(300, 550)
-     self.r = rnd(2, 50)
-     self.vx = rnd(-10, 10)
-     self.vy = rnd(-10, 10)
+     self.r = rnd(30, 50)
      self.color = RED
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
 
     def new_target(self):
         """ Инициализация новой цели. """
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(2, 50)
+        self.x = rnd(600, 780)
+        self.y = rnd(300, 550)
+        self.r = rnd(30, 50)
+        self.live = 1
 
 
     def hit(self, points=1):
@@ -180,13 +179,14 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target = Target()
+target = Target(screen)
 finished = False
 
 while not finished:
     screen.fill(WHITE)
     gun.draw()
     target.draw()
+
     for b in balls:
         b.draw()
     pygame.display.update()
@@ -202,12 +202,15 @@ while not finished:
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
 
+
     for b in balls:
         b.move()
-        if b.hittest(target) and target.live:
+        if b.hittest(target):
+            balls.remove(b)
             target.live = 0
             target.hit()
             target.new_target()
+
     gun.power_up()
 
 pygame.quit()
