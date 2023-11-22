@@ -182,7 +182,6 @@ class Target:
         self.x += self.vx
         self.y += self.vy
 
-
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
@@ -239,10 +238,12 @@ while not finished:
             target1.live = 0
             target1.hit()
             target1.new_target()
+            balls.remove(b)
         if b.hittest(target2):
             target2.live = 0
             target2.hit()
             target2.new_target()
+            balls.remove(b)
 
     gun.power_up()
 
