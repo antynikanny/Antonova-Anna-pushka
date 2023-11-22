@@ -1,7 +1,6 @@
 
 
 import math
-from random import choice
 import pygame
 from random import choice, randint as rnd
 
@@ -194,7 +193,76 @@ class Target:
             self.r
         )
 
+class Target_gor:
+    def __init__(self, screen):
+     self.points = 0
+     self.live = 1
+     self.screen = screen
+     self.x = rnd(600, 780)
+     self.y = rnd(300, 550)
+     self.r = rnd(30, 50)
+     self.vx = rnd(4,4)
+     self.color = RED
+    def new_target(self):
+        self.x = rnd(600, 780)
+        self.y = rnd(300, 550)
+        self.r = rnd(30, 50)
+        self.live = 1
+    def move(self):
+        if self.x >= WIDTH - self.r or self.x <= self.r:
+            if self.x > WIDTH - self.r:
+                self.x = WIDTH - self.r
+            if self.x < self.r:
+                self.x = self.r
+            self.vx *= -1
+        self.x += self.vx
+        self.y = self.y
+    def hit(self, points=1):
+        """Попадание шарика в цель."""
+        self.points += points
 
+    def draw(self):
+        pygame.draw.circle(
+            self.screen,
+            self.color,
+            (self.x, self.y),
+            self.r
+        )
+
+class Target_vert:
+    def __init__(self, screen):
+     self.points = 0
+     self.live = 1
+     self.screen = screen
+     self.x = rnd(600, 780)
+     self.y = rnd(300, 550)
+     self.r = rnd(30, 50)
+     self.vy = rnd(4,4)
+     self.color = RED
+    def new_target(self):
+        self.x = rnd(600, 780)
+        self.y = rnd(300, 550)
+        self.r = rnd(30, 50)
+        self.live = 1
+    def move(self):
+        if self.y >= HEIGHT - self.r:
+            self.vy *= -1
+
+        if self.y <= 0 + self.r:
+            self.vy *= -1
+        self.x = self.x
+        self.y += self.vy
+    def hit(self, points=1):
+        """Попадание шарика в цель."""
+        self.points += points
+
+    def draw(self):
+        pygame.draw.circle(
+            self.screen,
+            self.color,
+            (self.x, self.y),
+            self.r
+        )
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -203,8 +271,9 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target1 = Target(screen)
-target2 = Target(screen)
+types =[Target_gor, Target,Target_vert]
+target1 = choice(types)((screen))
+target2 = choice(types)((screen))
 finished = False
 
 while not finished:
