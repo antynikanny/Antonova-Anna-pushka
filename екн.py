@@ -109,6 +109,7 @@ class Gun:
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1
+        self.x = 40
         self.color = GREY
 
 
@@ -141,10 +142,16 @@ class Gun:
             self.color = RED
         else:
             self.color = GREY
+    def moveleft(self):
+            self.x -= 10
+    def moveright(self):
+            self.x += 10
+
+
 
     def draw(self):
-        pygame.draw.line(screen, self.color, [40, 450],
-                         [40 + self.f2_power * math.cos(self.an),
+        pygame.draw.line(screen, self.color, [self.x, 450],
+                         [self.x + self.f2_power * math.cos(self.an),
                           450 + self.f2_power * math.sin(self.an)], 10)
 
     def power_up(self):
@@ -295,6 +302,11 @@ while not finished:
     if target2.live:
         target2.draw()
         target2.move()
+    if pygame.key.get_pressed()[pygame.K_LEFT]:
+        gun.moveleft()
+    if pygame.key.get_pressed()[pygame.K_RIGHT]:
+        gun.moveright()
+
 
     for b in balls:
         b.draw()
