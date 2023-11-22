@@ -11,6 +11,20 @@ BLUE = 0x0000FF
 YELLOW = 0xFFC91F
 GREEN = 0x00FF00
 MAGENTA = 0xFF03B8
+import math
+from math import sqrt
+from random import choice, randint as rnd
+
+import pygame
+
+
+FPS = 30
+
+RED = 0xFF0000
+BLUE = 0x0000FF
+YELLOW = 0xFFC91F
+GREEN = 0x00FF00
+MAGENTA = 0xFF03B8
 CYAN = 0x00FFCC
 BLACK = (0, 0, 0)
 WHITE = 0xFFFFFF
@@ -19,7 +33,7 @@ GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 WIDTH = 800
 HEIGHT = 600
-g=0.7
+waiting_for_sleep_to_over = False
 
 
 class Ball:
@@ -37,11 +51,8 @@ class Ball:
         self.vx = 0
         self.vy = 0
         self.color = choice(GAME_COLORS)
-        self.live = pygame.time.get_ticks()
+        self.live = 30
         self.birth = pygame.time.get_ticks()
-        balls.append(self)
-
-
 
     def move(self):
         """Переместить мяч по прошествии единицы времени.
@@ -50,6 +61,7 @@ class Ball:
         self.x и self.y с учетом скоростей self.vx и self.vy, силы гравитации, действующей на мяч,
         и стен по краям окна (размер окна 800х600).
         """
+        g = 1
         self.x += self.vx
         self.y += self.vy
         self.vy += g
@@ -59,13 +71,15 @@ class Ball:
             if self.x < self.r:
                 self.x = self.r
             self.vx *= -1
+            self.vy *= 1
         if self.y >= HEIGHT - self.r:
             if self.y > HEIGHT - self.r:
                 self.y = HEIGHT - self.r
             self.vy *= -1
+            self.vx *= 1
 
         if pygame.time.get_ticks() - self.birth >= 1300:
-            balls.remove(self) 
+            balls.remove(self)
             del self
         else:
             self.live = 30 - (pygame.time.get_ticks() - self.birth) // 1000
@@ -86,11 +100,7 @@ class Ball:
         Returns:
             Возвращает True в случае столкновения мяча и цели. В противном случае возвращает False.
         """
-        # FIXME
-        if (self.x - obj.x)**2+(self.y - obj.y)**2 <= (self.r + obj.r)**2:
-            return True
-        else:
-            return False
+        return sqrt((obj.x - self.x)**2 + (obj.y - self.y)**2) <= obj.r + self.r
 
 
 class Gun:
@@ -100,6 +110,7 @@ class Gun:
         self.f2_on = 0
         self.an = 1
         self.color = GREY
+
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -116,7 +127,7 @@ class Gun:
         new_ball.r += 5
         self.an = math.atan2((event.pos[1]-new_ball.y), (event.pos[0]-new_ball.x))
         new_ball.vx = self.f2_power * math.cos(self.an)
-        new_ball.vy = - self.f2_power * math.sin(self.an)
+        new_ball.vy = self.f2_power * math.sin(self.an)
         balls.append(new_ball)
         self.f2_on = 0
         self.f2_power = 10
@@ -124,17 +135,17 @@ class Gun:
     def targetting(self, event):
         """Прицеливание. Зависит от положения мыши."""
         if event:
-            self.an = math.atan((event.pos[1]-450) / (event.pos[0]-20))
+            d = event.pos[0]-20
+            self.an = math.atan((event.pos[1]-450) / d if d != 0 else 1)
         if self.f2_on:
             self.color = RED
         else:
             self.color = GREY
 
     def draw(self):
-            pygame.draw.line(screen, self.color, [40, 450],
-                             [40 + self.f2_power * math.cos(self.an),
-                              450 + self.f2_power * math.sin(self.an)], 10)
-
+        pygame.draw.line(screen, self.color, [40, 450],
+                         [40 + self.f2_power * math.cos(self.an),
+                          450 + self.f2_power * math.sin(self.an)], 10)
 
     def power_up(self):
         if self.f2_on:
@@ -143,7 +154,6 @@ class Gun:
             self.color = RED
         else:
             self.color = GREY
-
 
 class Target:
     def __init__(self, screen):
