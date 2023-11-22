@@ -1,3 +1,5 @@
+
+
 import math
 from random import choice
 import pygame
@@ -36,7 +38,7 @@ class Ball:
         self.vx = 0
         self.vy = 0
         self.color = choice(GAME_COLORS)
-        self.live = 30
+        self.live = pygame.time.get_ticks()
         self.birth = pygame.time.get_ticks()
         balls.append(self)
 
@@ -62,6 +64,11 @@ class Ball:
             if self.y > HEIGHT - self.r:
                 self.y = HEIGHT - self.r
             self.vy *= -1
+        if pygame.time.get_ticks() - self.birth >= 1300:
+            balls.remove(self) 
+            del self
+        else:
+            self.live = 30 - (pygame.time.get_ticks() - self.birth) // 1000
 
     def draw(self):
         pygame.draw.circle(
@@ -202,11 +209,9 @@ while not finished:
         elif event.type == pygame.MOUSEMOTION:
             gun.targetting(event)
 
-
     for b in balls:
         b.move()
         if b.hittest(target):
-            balls.remove(b)
             target.live = 0
             target.hit()
             target.new_target()
