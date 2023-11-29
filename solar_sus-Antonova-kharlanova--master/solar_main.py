@@ -160,7 +160,7 @@ def main():
         drawer.update(space_objects, box)
         time.sleep(1.0 / 60)
 
-    print('Modelling finishedd!')
+    print('Modelling finished!')
 
 if __name__ == "__main__":
     main()
